@@ -1,0 +1,110 @@
+
+Case 1: With class instance, thread fork, urandom of local var called
+Below is Code order
+  initial begin
+    r1 = new();
+    r1.randomize();
+    r1.print();
+
+    fork
+      rand_task();
+    join_none
+
+     temp_var = $urandom();
+     $display("PROGRAM_BLK:temp_var is %0d ",temp_var);
+  end
+
+Below are results:
++ntb_random_seed=54309
+RAND_CLASS:rand_var is -1088554368
+PROGRAM_BLK:temp_var is 1562188969
+RAND_TASK:urand_var is 1321264042
+##########################End of case 1 ###########################
+
+
+Case 2: With class instance, no thread forked, urandom of local var called
+
+Below is code order:
+
+  initial begin
+    r1 = new();
+
+    r1.randomize();
+    r1.print();
+
+     temp_var = $urandom();
+     $display("PROGRAM_BLK:temp_var is %0d ",temp_var);
+
+  end
+
+Below are results:
+RAND_CLASS:rand_var is -1088554368
+PROGRAM_BLK:temp_var is 520479811
+##########################End of case 2 ###########################
+
+Case 3: With no class instance, no thread forked, urandom of local var called
+
+
+Below is code order:
+  initial begin
+
+     temp_var = $urandom();
+     $display("PROGRAM_BLK:temp_var is %0d ",temp_var);
+
+  end
+
+Below are results:
+PROGRAM_BLK:temp_var is 1881560313
+##########################End of case 3 ###########################
+Case 4: With  multiple class instances,  thread forked, urandom of local var called
+
+
+Below is code order:
+
+  initial begin
+  r1 = new();
+  r2 = new();
+  r1.randomize();
+  r1.print();
+  fork
+    rand_task();
+  join_none
+
+     temp_var = $urandom();
+     $display("PROGRAM_BLK:temp_var is %0d ",temp_var);
+
+  end
+Below are results:
+RAND_CLASS:rand_var is -1088554368
+PROGRAM_BLK:temp_var is -1242851038
+RAND_TASK:urand_var is -495294871
+
+Conclusion: Multiple object instantiations changes the RNG State of subsequent urandom calls
+
+##########################End of case 4 ###########################
+Case 5:(Impact of randomize calls) With  multiple class instances randomize called multiple times,  thread forked, urandom of local var called
+
+
+Below is code order:
+  initial begin
+  r1 = new();
+  r2 = new();
+  r1.randomize();
+  r1.print();
+  r1.randomize();
+  r1.randomize();
+  fork
+    rand_task();
+  join_none
+
+     temp_var = $urandom();
+     $display("PROGRAM_BLK:temp_var is %0d ",temp_var);
+  end
+
+Below are results:
+RAND_CLASS:rand_var is -1088554368
+PROGRAM_BLK:temp_var is -1242851038
+RAND_TASK:urand_var is -495294871
+
+##########################End of case 5 ###########################
+
