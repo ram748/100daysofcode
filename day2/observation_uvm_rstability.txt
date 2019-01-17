@@ -1,0 +1,104 @@
+
+curs when component is not registered in a proper way also: ####################
+
+Below is the error type:
+
+ Error-[TMAFTC] Too many arguments to function/task call
+/apps/vcsmx/etc/uvm-1.2/src/base/uvm_registry.svh, 66
+"packet::new(name, parent)"
+The above function/task call is done with more arguments than needed
+
+
+Case 1:- Impact of component instantiations in test on random stability of objects randomized in env
+
+Below is Code:
+
+  function void build_phase(uvm_phase phase);
+    rand_config_i = rand_config::type_id::create("rand_config_i");
+    assert(randomize(rand_config_i)); //1
+    rand_config_i.print();
+    assert(rand_config_i.randomize()); //2
+    rand_config_i.print();
+  endfunction:build_phase
+
+
+
+Below are Results:
+UVM_INFO @ 0: reporter [RNTST] Running test some_test...
+config_field1 is 0 , config_field2 is 3439824713
+config_field1 is 0 , config_field2 is 125629839
+
+
+Case 2: Instatiate new env component in test(above existing env) and check Results
+
+Below is the code updated:
+
+
+    function void build_phase(uvm_phase phase);
+       env2 = some_env::type_id::create("env2",this);
+       env1 = some_env::type_id::create("env1",this);
+    endfunction:build_phase
+
+
+
+ We are intrested in env1 results
+
+Below are Results after adding new env instance in test:
+
+UVM_INFO @ 0: reporter [RNTST] Running test some_test...
+Start of print from env : env1
+UVM_INFO uvm_rstability_test.sv(11) @ 0: reporter [rand_config_i] config_field1 is 1 , config_field2 is 182310894
+UVM_INFO uvm_rstability_test.sv(11) @ 0: reporter [rand_config_i] config_field1 is 0 , config_field2 is 2011799356
+End of print from env : env1
+Start of print from env : env2
+UVM_INFO uvm_rstability_test.sv(11) @ 0: reporter [rand_config_i] config_field1 is 1 , config_field2 is 711841561
+UVM_INFO uvm_rstability_test.sv(11) @ 0: reporter [rand_config_i] config_field1 is 0 , config_field2 is 3613834880
+End of print from env : env2
+
+##########################End of case 2##############################################
+
+############Case3:Results with only one env in the test ###################
+
+ Learning Note: Randomized results change when the name of the component changes,Each component phase is manually seeded and is independent of other instantiations in the test
+
+
+Below is the code updated:
+
+
+    function void build_phase(uvm_phase phase);
+       env1 = some_env::type_id::create("env1",this);
+    endfunction:build_phase
+
+
+Below are Results :
+UVM_INFO @ 0: reporter [RNTST] Running test some_test...
+Start of print from env : env1
+config_field1 is 1 , config_field2 is 182310894
+config_field1 is 0 , config_field2 is 2011799356
+End of print from env : env1
+#####################End of Case3#########################################
+
+############Case4:Fork a thread or change RNG State in TOP module and examine affect on uvm components###################
+
+ Learning Note: Changing code in Top doesn't affect the randomized results produced by a component, Since each phase is manually seeded with integer value of  phase name appended to full name of the component
+
+Below is the code updated(in top module):
+
+  initial begin
+   tmp = $urandom();
+   chk = new();
+   run_test();
+  end
+
+
+Below are Results:
+UVM_INFO @ 0: reporter [RNTST] Running test some_test...
+Start of print from env : env1
+config_field1 is 1 , config_field2 is 182310894
+onfig_field1 is 0 , config_field2 is 2011799356
+End of print from env : env1
+
+
+#####################End of Case4#########################################
+            
+
