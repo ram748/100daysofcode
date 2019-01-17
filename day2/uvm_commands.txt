@@ -1,0 +1,4 @@
+
+Command to Compile: vcs -ntb_opts uvm-1.1 -full64 -sverilog uvm_rstability_test.sv
+Command to run: ./simv +UVM_TESTNAME=some_test +UVM_VERBOSITY=UVM_LOW +ntb_random_seed=54309
+~
