@@ -1,0 +1,32 @@
+Note 1:
+$test$plusargs(string) searches for list of specified strings on command line, if any of the string matches. It returns a nonzero value, this is usually used in conjunction with if statement as shown in below example
+
+EX:- if($test$plusargs("HELLO") begin
+          print("Hello passed in command line as +HELLO");
+     end
+command line :- vcs -sverilog file.sv +HELLO
+
+
+Note 2:
+$value$plusargs(string,variable) is used to capture values from the command line arguments
+Ex:-
+  bit en
+  initial begin
+    if( $value$plusargs("HELLO=%d",en) ) begin
+        $display("enable is %0d",en);
+    end
+  end
+Command line :- vcs -sverilog file.sv +HELLO=1
+
+
+Note 3:
+$sformat is used to output string to its argrument,in below example plusarg_name contains the string as specified in its following argument.
+
+Ex:-
+string plusarg_name ;
+
+ initial begin
+   $sformat(plusarg_name,"global seed izzzzzzzzs %0d ",uvm_global_random_seed);
+  $display(plusarg_name);
+end
+                                                                                                                                        
