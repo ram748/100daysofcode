@@ -1,0 +1,50 @@
+ase1:- deltacycle info of nonblocking assignment statement.
+   In vcs to enable delta cycle info compile the design with -debug_pp
+   To view delta cycle difference in DVE go to delta cycle -> expand time option
+   Below is the code that captured the delta cycle delay between Blocking and NBA assignment
+
+  In synchronous rst design, rst must be active before 1st edge of the clock. So assign rst using blocking and initialize clk using NBA.
+  In asynchronous rst design,order of rst and clk doesn't matter. But both clk and rst should be assigned using NBA
+
+module nonblocking();
+
+ timeunit 1us;
+ timeprecision 1ns;
+ bit clk;
+ reg rst;
+
+ initial begin
+  clk = 1'b0;
+ #5ns clk = 1'b1;
+
+ end
+
+ initial begin
+  rst <= 1'b1;
+  #5ns rst <= 1'b0;
+ end
+
+ initial begin
+ $dumpfile("file.vcd");
+ $dumpvars(0);
+ $vcdpluson(0);
+$vcdplusdeltacycleon;
+#30;
+ $vcdplusdeltacycleoff;
+ end
+
+initial begin
+ $timeformat(-9,3,"ns",5);
+$display("starting tb");
+#30;
+$display("ending tb %t",$time);
+$finish();
+end
+
+endmodule:nonblocking
+
+Case 2 : Write a code on trigger persistance feature.
+
+  wait(tmp_event.triggered) statement uses trigger persistance feature which will be active through out the simulation timestep not just at the instant when tmp_event is triggered.
+
+Write a not on 4 state inequality operater
