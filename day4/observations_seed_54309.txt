@@ -1,0 +1,95 @@
+Case1:- Manually Seeded the object,checking urandom(thread) and randomize results with only first instance of the class
+
+Below is instance code:
+
+initial begin
+  cls_1 = new("cls1");
+  cls_1.not_random();
+end
+
+Below are results:
+Seed : 54309
+  instance name is cls1
+  constant result 802792108,instance:cls1
+  Another seeded result(Object seeding) -541627016,instance:cls1
+
+#####################End of Case1######################################
+Case2:- Muliple instances of the class with not_random method called
+
+Below is instance code:
+ initial begin
+   cls_2 = new("cls2");
+   cls_2.not_random();
+   cls_1 = new("cls1");
+   cls_1.not_random();
+ end
+
+
+Below are results:
+Seed :54309
+instance name is cls2
+constant result 802792108,instance:cls2
+Another seeded result(Object seeding) -541627016,instance:cls2
+instance name is cls1
+constant result 802792108,instance:cls1
+Another seeded result(Object seeding) -541627016,instance:cls1
+#####################End of Case2######################################
+Case3:- change +ntb_random_seed and check results
+
+Below are results:
+Seed: +ntb_random_seed=54303283289
+instance name is cls2
+constant result 802792108,instance:cls2
+Another seeded result(Object seeding) -541627016,instance:cls2
+instance name is cls1
+constant result 802792108,instance:cls1
+Another seeded result(Object seeding) -541627016,instance:cls1
+
+#####################End of Case3######################################
+Case4:- Results of random task which is not manually seeded
+
+Below is new random task:
+function void random();
+    $display("random result %0d,instance:%0s ",$urandom(),i_name);
+     this.randomize();
+    $display("Another seeded result(Object seeding) %0d,instance:%0s ",y,i_name);
+endfunction:random
+
+Below are results:
+  Seed: 54309
+ random result 1562188969,instance:cls1
+  Another seeded result(Object seeding) -1676611704,instance:cls1
+  random result 3052116258,instance:cls2
+  Another seeded result(Object seeding) -1088554368,instance:cls2
+
+#####################End of Case4######################################
+Case5:- Impact of forking threads on randomize(i.e Object RNG),Provided objects are instantiated before forking new threads
+Learning Note:- Adding new threads after instantiating object doesn't have affect on Object RNG state(i.e randomize calls to those objects)
+Below are results:
+  Seed: 54309
+  d_time is 1
+  d_time is 1
+  random result 3052116258,instance:cls1
+  Another seeded result(Object seeding) -1676611704,instance:cls1
+  random result 4185464573,instance:cls2
+  Another seeded result(Object seeding) -1088554368,instance:cls2
+#####################End of Case5######################################
+Case 6:- Protect randstate using set_randstate and get_randstate calls
+
+Code update:- Added a new instance of class in the initial block, thread RNG state changes, but RNG states of individual objects doesn't change.
+
+
+Below are results:
+random result 4185464573,instance:cls1
+Another seeded result(Object seeding) -1676611704,instance:cls1
+random result 2510189307,instance:cls2
+Another seeded result(Object seeding) -1088554368,instance:cls2
+#####################End of Case6######################################
+Case 7:- Protect randstate using set_randstate and get_randstate calls
+
+Below are results:
+random result 1562188969,instance:cls1
+Another seeded result(Object seeding) -1676611704,instance:cls1
+random result 3052116258,instance:cls2
+Another seeded result(Object seeding) -1088554368,instance:cls2
+
