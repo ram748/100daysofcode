@@ -1,0 +1,88 @@
+Learning note 1:- Default return type of function is  4 state 1 bit integer data type
+ Function print in below code returns 1'bz, and discards other bits
+
+module test;
+int tmp;
+initial begin
+
+  tmp = c.print();
+end
+endmodule:test
+
+class Consumer;
+ rand int c_1;
+ Consumer c;
+
+ function static print();
+   $display("c_1 is %0d",c_1);
+   print = 4'b1x0z;
+ endfunction:print
+endclass:Consumer
+
+Learning note 2:- function argument types are sticky in nature , for example in below function Declaring Consumer as ref and omitting  that for Producer makes Producer arguement a ref type.
+
+function void build_env(ref Consumer c, Producer p);
+   c = new(); // construct object and store handle in c
+   p = new(); // construct object and store handle in p
+endfunction
+
+Learning note 3:- Static functions/tasks are not re-entrant,Second call to a static task as shown below has the input argument values overridden though it completes after 2 clock cycles, values of max_cycles and irq_num are overridden
+
+Results are:-
+ Compiler version N-2017.12-SP2; Runtime version N-2017.12-SP2;  Jan 23 08:23 2019
+Forking off two interrupt requests ...
+
+At 0000000000000000000000d: Watchdog started for IRQ[00000000000d] for 00000000002d cycles
+At 0000000000000000000000d: Watchdog started for IRQ[00000000001d] for 00000000005d cycles
+Error at 0000000000000000000000d: IRQ[00000000001d] no after 00000000005d cycles
+At 0000000000000000000000d, test completed or timed out
+$finish called from file "static_methods.sv", line 30.
+$finish at simulation time                   15
+           V C S   S i m u l a t i o n   R e p o r t
+Time: 15 ns
+CPU Time:      0.340 seconds;       Data structure size:   0.0Mb
+Wed Jan 23 08:23:58 2019
+
+Code:-
+program test ();
+
+timeunit 1us;
+timeprecision 1ns;
+
+logic clock;
+logic [1:0] ack;
+logic [1:0] irq;
+
+initial begin
+ clock = 1'b0;
+ forever #5ns clock = ~clock;
+end
+
+
+initial begin: irs_test
+  $display("Forking off two interrupt requests ... \n");
+  fork
+    watchdog (0,2); //II must receive aok[O] within 20 cycles
+    watchdog (1,5);// II must receive ack[l] within 50 cycles
+  begin
+    irq[0] = 1'b1;
+    irq[1] = 1'b1;
+    wait (ack)
+    $display("Received ack at %Od, disabling watChdog", $time);
+    disable watchdog; //II got ack; kill both watchdog tasks
+  end
+  join_any
+  $display("\At %Od, test completed or timed out", $time);
+  $finish;// II abort simulation
+end: irs_test
+
+task watchdog (input int irq_num,input int max_cycles) ;
+  $display("At %Od: Watchdog started for IRQ[%Od] for %Od cycles",$time, irq_num, max_cycles);
+  repeat (max_cycles) @(posedge clock); // II delay until max cycles reached
+  $display("Error at %Od: IRQ[%Od] no after %Od cycles",$time, irq_num, max_cycles);
+endtask: watchdog
+
+endprogram:test
+
+Learning Note: We can't access modules hierarchically from program block
+                                                                     
