@@ -1,0 +1,3 @@
+Learning Note1:- objection object has a dubious feature of hierarchical propagation i.e whenever a child component changes the state of objection its parent component gets a notification.This is expensive operation in objection object
+
+Learning Note2:- objection object has a mini scheduler, this scheduler is started when uvm_root::run_test() is first called. objection context entry is set to run each time an drian time entry is set to an objection object. It also watches for re-raising the objections before drain time elapses. This is additional overhead in objection object
