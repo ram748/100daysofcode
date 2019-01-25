@@ -1,0 +1,10 @@
+Case 1:- Does an automatic package covert methods in the package as automatic?
+
+Learning Note1:- Module inside a package is not allowed
+Learning Note2:- Feature is not yet supported: Program block inside a module/package/interface is not yet implemented
+Learning Note3:- ref keyword cant be used along with input keyword, Just declare as follows function new(ref logic clock);
+Learning Note4:- We cant assign interface signals to local class members and use them for wait events such as @(posedge clock). We always have to use virtual interface
+Learning Note5:- Static variables inside functions/tasks initialize only one time
+Learning Note6:- Functions and begin..end blocks use static storage by default and are initialized during compile time.
+Learning Note7:- When multiple threads are spawned using for loop,inside fork ..join_none. None is them will start executing until the for loop completes
+Learning Note8:- Two state datatype array will print 0 when out of bound access is done.
