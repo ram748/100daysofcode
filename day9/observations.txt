@@ -1,0 +1,16 @@
+Learning Note1:- To insulate disable fork to a particular begin..end block, place that begin..end block inside a fork..join, as shown below,This will only disable the longest of both start_a_thread calls,i.e the thread which takes more than 15ns. And it doesn't impact the do_action thread which takes 20us to complete.
+
+   Always but fork..join around that block that uses disable fork to create a firewall.This creates a thread and limits the scope of disable fork statement.
+
+ initial begin:test_sequence
+   do_action();
+   fork
+     begin:insulated_block
+       start_a_thread(10);
+       start_a_thread(30);
+       #15us disable fork;
+     end:insulated_block
+   join
+   #100us;  //Wait for all threads to complete
+
+ end:test_sequence
