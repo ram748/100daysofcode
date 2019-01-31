@@ -1,0 +1,8 @@
+Learning Note:- Use assert control tasks as below 1 in below statement indicates the label specified is an assertion directive
+
+Ex:-
+    $asserton(1,p_rand);
+    p_rand:assert(p.randomize()) begin
+             $display("p randomization passed ");
+           end
+           else $display("p randomization failed ");
