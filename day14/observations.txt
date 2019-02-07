@@ -1,0 +1,1 @@
+Note:- If input port is left unconnected it shall have 'z on it.
