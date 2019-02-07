@@ -1,0 +1,30 @@
+1) Worked on delayed version of a signal,
+revised inertial and transport delays
+
+Note:- Assign statement can schedule only one active assignment at a time
+
+Inertial delays as below can be used to model setup time of any physical cells, i.e if input changes faster than intertial delay,previous values are lost.
+
+Ex:- assign #1400ns w_clk_d = clk;
+
+Note:- Filtering can be reduced by chaining smaller delays; the same strategy is used with physical delay cells.
+
+wire   #700ps clk_d = clk;
+assign #700ps w_clk_d = clk_d;
+
+Note:- If you want to get a delayed version use NBA, They can sample & schedule assignment for every change of RHS signal
+
+File I/O error
+
+To move transport delay assignment to schedulers active region, Use below code
+
+logic w_clk_d;
+always @(clk) fork
+  begin
+      automatic logic sample_clk; // visible only locally with in the fork thread
+      sample_clk = clk; // local copy of clk
+      #1400ps;
+     //#1400ps;
+      w_clk_d = sample_clk;
+  end
+join_none // non-blocking, allows detection of next @(clk)
