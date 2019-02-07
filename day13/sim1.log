@@ -1,0 +1,25 @@
+Command: /home/ramachan/my_works/daysofcode/day13/./simv -l sim1.log
+Chronologic VCS simulator copyright 1991-2017
+Contains Synopsys proprietary information.
+Compiler version N-2017.12-SP2; Runtime version N-2017.12-SP2;  Feb  4 14:29 2019
+1st Cycle     2nd Cycle    Output message and notes
+_ _ _ _ _     _ _ _ _ _    _ _ _ _ _ _ _ _ _ _ _ _
+state_e req   ack
+_ _ _ _ _ _   _ _ _ _ _
+INIT     0   0          None
+INIT     0   0          None
+FETCH     0   0          None
+FETCH     1   0          None
+FETCH     1   0          None
+FETCH     1   0          None
+"test_vacuous.sv", 28: test_vacuous.unnamed$$_0: started at 45ns failed at 55ns
+        Offending 'ack'
+failed
+FETCH     1   0          Failed
+passed
+$finish called from file "test_vacuous.sv", line 54.
+$finish at simulation time                   75
+           V C S   S i m u l a t i o n   R e p o r t
+Time: 75 ns
+CPU Time:      0.330 seconds;       Data structure size:   0.0Mb
+Mon Feb  4 14:30:09 2019
